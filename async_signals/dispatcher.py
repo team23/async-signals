@@ -6,7 +6,7 @@ from typing import Any, Callable, Hashable, List, Tuple, Union
 
 from .utils import func_accepts_kwargs
 
-logger = logging.getLogger("django.dispatch")
+logger = logging.getLogger("async_signals.dispatch")
 
 
 def _make_id(
@@ -219,8 +219,8 @@ class Signal:
         """
 
         if (
-                not self.receivers
-                or self.sender_receivers_cache.get(sender) is NO_RECEIVERS
+            not self.receivers
+            or self.sender_receivers_cache.get(sender) is NO_RECEIVERS
         ):
             return []
 
@@ -262,8 +262,8 @@ class Signal:
         """
 
         if (
-                not self.receivers
-                or self.sender_receivers_cache.get(sender) is NO_RECEIVERS
+            not self.receivers
+            or self.sender_receivers_cache.get(sender) is NO_RECEIVERS
         ):
             return []
 
@@ -272,7 +272,12 @@ class Signal:
         responses = []
         for receiver in self._live_receivers(sender):
             try:
-                response = receiver(signal=self, sender=sender, **named)
+                response = await self._call_receiver(
+                    receiver=receiver,
+                    signal=self,
+                    sender=sender,
+                    **named,
+                )
             except Exception as err:
                 logger.error(
                     "Error calling %s in Signal.send_robust() (%s)",

@@ -8,4 +8,4 @@ Heavily modified for Django's purposes.
 And again modified to be fully async.
 """
 
-from .dispatcher import Signal, receiver  # NOQA
+from .dispatcher import Signal, receiver

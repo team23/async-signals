@@ -105,7 +105,7 @@ class Signal:
             # Check for **kwargs
             if not func_accepts_kwargs(receiver):
                 raise ValueError(
-                    "Signal receivers must accept keyword arguments (**kwargs)."
+                    "Signal receivers must accept keyword arguments (**kwargs).",
                 )
 
         if dispatch_uid:
@@ -285,7 +285,7 @@ class Signal:
                 responses.append((receiver, response))
         return responses
 
-    def _clear_dead_receivers(self):
+    def _clear_dead_receivers(self) -> None:
         # Note: caller is assumed to hold self.lock.
         if self._dead_receivers:
             self._dead_receivers = False

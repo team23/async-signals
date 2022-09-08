@@ -2,7 +2,7 @@ import asyncio
 import logging
 import threading
 import weakref
-from typing import Any, Callable, Hashable, List, Tuple, Union
+from typing import Any, Callable, Dict, Hashable, List, Tuple, Type, Union
 
 from .utils import func_accepts_kwargs
 
@@ -12,8 +12,8 @@ logger = logging.getLogger("async_signals.dispatch")
 def _make_id(
     target: Union[Hashable, Callable, None],
 ) -> Union[Hashable, Tuple[Hashable, ...]]:
-    if hasattr(target, "__func__"):
-        return id(target.__self__), id(target.__func__)
+    if hasattr(target, "__self__") and hasattr(target, "__func__"):
+        return id(target.__self__), id(target.__func__)  # type: ignore
     return id(target)
 
 
@@ -33,7 +33,7 @@ class Signal:
             { receiverkey (id) : weakref(receiver) }
     """
 
-    receivers: List[Tuple[Union[Hashable, Tuple[Hashable, Hashable]], Callable]]
+    receivers: List[Tuple[Tuple[Hashable, Hashable], Callable]]
     use_caching: bool
     debug: bool
 
@@ -55,7 +55,8 @@ class Signal:
         # distinct sender we cache the receivers that sender has in
         # 'sender_receivers_cache'. The cache is cleaned when .connect() or
         # .disconnect() is called and populated on send().
-        self.sender_receivers_cache = weakref.WeakKeyDictionary() if use_caching else {}
+        self.sender_receivers_cache: Union[weakref.WeakKeyDictionary, Dict] \
+            = weakref.WeakKeyDictionary() if use_caching else {}
         self._dead_receivers = False
 
     def connect(
@@ -114,12 +115,13 @@ class Signal:
             lookup_key = (_make_id(receiver), _make_id(sender))
 
         if weak:
-            ref = weakref.ref
+            ref: Union[Type[weakref.WeakMethod[Any]], Type[weakref.ReferenceType[Any]]] \
+                = weakref.ref
             receiver_object = receiver
             # Check for bound methods
             if hasattr(receiver, "__self__") and hasattr(receiver, "__func__"):
                 ref = weakref.WeakMethod
-                receiver_object = receiver.__self__
+                receiver_object = receiver.__self__  # type: ignore
             receiver = ref(receiver)
             weakref.finalize(receiver_object, self._remove_receiver)
 
@@ -300,7 +302,7 @@ class Signal:
                 if not (isinstance(r[1], weakref.ReferenceType) and r[1]() is None)
             ]
 
-    def _live_receivers(self, sender: type) -> List[Callable]:
+    def _live_receivers(self, sender: Union[type, None]) -> List[Callable]:
         """
         Filter sequence of receivers to get resolved, live receivers.
 

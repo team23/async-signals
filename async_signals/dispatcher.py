@@ -173,7 +173,7 @@ class Signal:
             self.sender_receivers_cache.clear()
         return disconnected
 
-    def has_listeners(self, sender: type = None) -> bool:
+    def has_listeners(self, sender: Union[type, None] = None) -> bool:
         return bool(self._live_receivers(sender))
 
     @classmethod
@@ -311,7 +311,7 @@ class Signal:
         """
 
         receivers = None
-        if self.use_caching and not self._dead_receivers:
+        if self.use_caching and not self._dead_receivers and sender is not None:
             receivers = self.sender_receivers_cache.get(sender)
             # We could end up here with NO_RECEIVERS even if we do check this case in
             # .send() prior to calling _live_receivers() due to concurrent .send() call.
@@ -325,7 +325,7 @@ class Signal:
                 for (receiverkey, r_senderkey), receiver in self.receivers:
                     if r_senderkey == NONE_ID or r_senderkey == senderkey:
                         receivers.append(receiver)
-                if self.use_caching:
+                if self.use_caching and sender is not None:
                     if not receivers:
                         self.sender_receivers_cache[sender] = NO_RECEIVERS
                     else:
@@ -353,7 +353,7 @@ class Signal:
 
 
 def receiver(
-    signal: Union[Signal, List[Signal]],
+    signal: Union[Signal, List[Signal], Tuple[Signal, ...]],
     *,
     sender: type = None,
     weak: bool = True,

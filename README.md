@@ -39,6 +39,14 @@ await my_signal.send("sender")
 `signal.send(...)` will return a list of all called receivers and their return
 values.
 
+## About **kwargs
+
+The `**kwargs` are mandatory for your receivers. This is because the signal
+will pass any arguments it receives to the receivers. This is useful if you
+want to pass additional information to the receivers. To allow adding
+additional arguments to the signal in the future, the receivers should is
+required to accept `**kwargs`.
+
 ## About weak signals
 
 The signal class will automatically remove signals when the receiver is

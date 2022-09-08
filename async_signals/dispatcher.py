@@ -98,7 +98,7 @@ class Signal:
                 anything hashable.
         """
 
-        # If DEBUG is on, check that we got a good receiver
+        # If debug is on, check that we got a good receiver
         if self.debug:
             if not callable(receiver):
                 raise TypeError("Signal receivers must be callable.")
@@ -345,7 +345,13 @@ class Signal:
         self._dead_receivers = True
 
 
-def receiver(signal: Signal, **kwargs: Any) -> Callable:
+def receiver(
+    signal: Union[Signal, List[Signal]],
+    *,
+    sender: type = None,
+    weak: bool = True,
+    dispatch_uid: Hashable = None,
+) -> Callable:
     """
     A decorator for connecting receivers to signals. Used by passing in the
     signal (or list of signals) and keyword arguments to connect::
@@ -362,9 +368,19 @@ def receiver(signal: Signal, **kwargs: Any) -> Callable:
     def _decorator(func: Callable) -> Callable:
         if isinstance(signal, (list, tuple)):
             for s in signal:
-                s.connect(func, **kwargs)
+                s.connect(
+                    func,
+                    sender=sender,
+                    weak=weak,
+                    dispatch_uid=dispatch_uid,
+                )
         else:
-            signal.connect(func, **kwargs)
+            signal.connect(
+                func,
+                sender=sender,
+                weak=weak,
+                dispatch_uid=dispatch_uid,
+            )
         return func
 
     return _decorator

@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# b5 Taskfile, see https://git.team23.de/build/b5 for details
+
+task:install() {
+    cd .. && \
+    poetry install
+}
+
+task:update() {
+    task:install
+}
+
+task:poetry() {
+    (
+        cd .. && \
+        poetry "$@"
+    )
+}
+
+task:test() {
+    task:poetry run pytest --cov=async_signals --cov-report term-missing:skip-covered
+}
+
+task:isort() {
+    task:poetry run isort async_signals tests
+}
+
+task:flake8() {
+    task:poetry run flake8 async_signals tests
+}
+
+task:mypy() {
+    task:poetry run mypy async_signals
+}
+
+task:lint() {
+    task:flake8
+    task:mypy
+}
+
+task:publish() {
+    task:poetry publish --build
+}

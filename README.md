@@ -18,6 +18,10 @@ to make this possible.
 * I added type annotations to all functions and classes, mypy is happy now 🧐
 * I created tests for the signals library - without using any Django models 😎
 
+## Installation
+
+Just use `pip install async-signals` to install the library.
+
 ## Usage
 
 ```python

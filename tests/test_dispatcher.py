@@ -138,7 +138,7 @@ def test_signal_connect_disconnect_with_caching_and_sender_name(cached_signal: S
 
 def test_signal_with_debug_ensures_callable(debug_signal: Signal):
     with pytest.raises(TypeError):
-        debug_signal.connect("invalid")
+        debug_signal.connect("invalid")  # type: ignore
 
 
 def test_signal_with_debug_ensures_kwargs(debug_signal: Signal):

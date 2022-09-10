@@ -62,7 +62,7 @@ class Signal:
     def connect(
         self,
         receiver: Callable,
-        sender: type = None,
+        sender: Hashable = None,
         weak: bool = True,
         dispatch_uid: Hashable = None,
     ) -> None:
@@ -134,7 +134,7 @@ class Signal:
     def disconnect(
         self,
         receiver: Callable = None,
-        sender: type = None,
+        sender: Hashable = None,
         dispatch_uid: Hashable = None,
     ) -> bool:
         """
@@ -173,7 +173,7 @@ class Signal:
             self.sender_receivers_cache.clear()
         return disconnected
 
-    def has_listeners(self, sender: Union[type, None] = None) -> bool:
+    def has_listeners(self, sender: Union[Hashable, None] = None) -> bool:
         return bool(self._live_receivers(sender))
 
     @classmethod
@@ -181,7 +181,7 @@ class Signal:
         cls,
         receiver: Callable,
         signal: "Signal",
-        sender: type,
+        sender: Hashable,
         **named: Any,
     ) -> Any:
         if asyncio.iscoroutinefunction(receiver):
@@ -199,7 +199,7 @@ class Signal:
 
     async def send(
         self,
-        sender: type,
+        sender: Hashable,
         **named: Any,
     ) -> List[Tuple[Callable, Any]]:
         """
@@ -241,7 +241,7 @@ class Signal:
 
     async def send_robust(
         self,
-        sender: type,
+        sender: Hashable,
         **named: Any,
     ) -> List[Tuple[Callable, Any]]:
         """
@@ -302,7 +302,7 @@ class Signal:
                 if not (isinstance(r[1], weakref.ReferenceType) and r[1]() is None)
             ]
 
-    def _live_receivers(self, sender: Union[type, None]) -> List[Callable]:
+    def _live_receivers(self, sender: Union[Hashable, None]) -> List[Callable]:
         """
         Filter sequence of receivers to get resolved, live receivers.
 
@@ -355,7 +355,7 @@ class Signal:
 def receiver(
     signal: Union[Signal, List[Signal], Tuple[Signal, ...]],
     *,
-    sender: type = None,
+    sender: Hashable = None,
     weak: bool = True,
     dispatch_uid: Hashable = None,
 ) -> Callable:

@@ -262,3 +262,31 @@ def test_receiver_for_signal_list(signal: Signal, signal2: Signal):
 
     assert len(signal.receivers) == 1
     assert len(signal2.receivers) == 1
+
+
+@pytest.mark.anyio
+async def test_receivers_only_called_when_sender_matches(signal: Signal, mocker):
+    receiver_function1 = mocker.AsyncMock()
+    receiver_function2 = mocker.AsyncMock()
+
+    signal.connect(receiver_function1, sender="sender1")
+    signal.connect(receiver_function2, sender="sender2")
+
+    await signal.send("sender1")
+
+    receiver_function1.assert_called_once()
+    receiver_function2.assert_not_called()
+    receiver_function1.reset_mock()
+    receiver_function2.reset_mock()
+
+    await signal.send("sender2")
+
+    receiver_function1.assert_not_called()
+    receiver_function2.assert_called_once()
+    receiver_function1.reset_mock()
+    receiver_function2.reset_mock()
+
+    await signal.send("sender3")
+
+    receiver_function1.assert_not_called()
+    receiver_function2.assert_not_called()

@@ -26,7 +26,7 @@ pytest-cov = "^3.0.0"
 anyio = {extras = ["trio"], version = "^3.6.1"}
 pytest-anyio = "^0.0.0"
 pytest-mock = "^3.8.2"
-tox = "^3.26.0"
+tox = ">=3.26,<5.0"
 
 [tool.isort]
 multi_line_output = 3

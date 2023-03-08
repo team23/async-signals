@@ -2,7 +2,7 @@ import asyncio
 import logging
 import threading
 import weakref
-from typing import Any, Callable, Dict, Hashable, List, Tuple, Type, Union
+from typing import Any, Callable, Dict, Hashable, List, Optional, Tuple, Type, Union
 
 from .utils import func_accepts_kwargs
 
@@ -133,9 +133,9 @@ class Signal:
 
     def disconnect(
         self,
-        receiver: Callable = None,
-        sender: Hashable = None,
-        dispatch_uid: Hashable = None,
+        receiver: Optional[Callable] = None,
+        sender: Optional[Hashable] = None,
+        dispatch_uid: Optional[Hashable] = None,
     ) -> bool:
         """
         Disconnect receiver from sender for signal.
@@ -342,7 +342,7 @@ class Signal:
                 non_weak_receivers.append(receiver)
         return non_weak_receivers
 
-    def _remove_receiver(self, receiver: Callable = None) -> None:
+    def _remove_receiver(self, receiver: Optional[Callable] = None) -> None:
         # Mark that the self.receivers list has dead weakrefs. If so, we will
         # clean those up in connect, disconnect and _live_receivers while
         # holding self.lock. Note that doing the cleanup here isn't a good
@@ -355,9 +355,9 @@ class Signal:
 def receiver(
     signal: Union[Signal, List[Signal], Tuple[Signal, ...]],
     *,
-    sender: Hashable = None,
+    sender: Optional[Hashable] = None,
     weak: bool = True,
-    dispatch_uid: Hashable = None,
+    dispatch_uid: Optional[Hashable] = None,
 ) -> Callable:
     """
     A decorator for connecting receivers to signals. Used by passing in the

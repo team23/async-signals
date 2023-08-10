@@ -1,4 +1,4 @@
-name: "LINT: Run flake8 & mypy"
+name: "LINT: Run ruff & mypy"
 on: [push, pull_request]
 jobs:
   flake8-and-mypy:
@@ -13,7 +13,7 @@ jobs:
         run: |
           python -m pip install --upgrade poetry
           poetry install
-      - name: Lint with flake8
+      - name: Lint with ruff & mypy
         run: |
-          poetry run flake8 .
-          poetry run mypy .
+          poetry run ruff check async_signals tests
+          poetry run mypy async_signals

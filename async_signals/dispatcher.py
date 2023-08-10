@@ -62,9 +62,9 @@ class Signal:
     def connect(
         self,
         receiver: Callable,
-        sender: Hashable = None,
+        sender: Optional[Hashable] = None,
         weak: bool = True,
-        dispatch_uid: Hashable = None,
+        dispatch_uid: Optional[Hashable] = None,
     ) -> None:
         """
         Connect receiver to sender for signal.
@@ -322,7 +322,7 @@ class Signal:
                 self._clear_dead_receivers()
                 senderkey = _make_id(sender)
                 receivers = []
-                for (receiverkey, r_senderkey), receiver in self.receivers:
+                for (_receiverkey, r_senderkey), receiver in self.receivers:
                     if r_senderkey == NONE_ID or r_senderkey == senderkey:
                         receivers.append(receiver)
                 if self.use_caching and sender is not None:
@@ -342,7 +342,7 @@ class Signal:
                 non_weak_receivers.append(receiver)
         return non_weak_receivers
 
-    def _remove_receiver(self, receiver: Optional[Callable] = None) -> None:
+    def _remove_receiver(self, receiver: Optional[Callable] = None) -> None:  # noqa: ARG002
         # Mark that the self.receivers list has dead weakrefs. If so, we will
         # clean those up in connect, disconnect and _live_receivers while
         # holding self.lock. Note that doing the cleanup here isn't a good

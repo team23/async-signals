@@ -18,7 +18,7 @@ pytest-mock = "^3.8.2"
 mypy = ">=0.971,<2.0"
 anyio = {extras = ["trio"], version = "^3.6.1"}
 tox = ">=3.26,<5.0"
-ruff = "^0.0.284"
+ruff = ">=0.0.284,<0.0.286"
 
 [tool.ruff]
 select = ["F","E","W","C","I","N","UP","ANN","S","B","A","COM","C4","T20","PT","ARG","TD","RUF"]

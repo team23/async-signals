@@ -1,7 +1,11 @@
 name: "LINT: Run ruff & mypy"
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '@weekly'
 jobs:
-  flake8-and-mypy:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

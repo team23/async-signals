@@ -3,7 +3,7 @@ on:
   push:
   pull_request:
   schedule:
-    - cron: '@weekly'
+    - cron: '0 7 * * 1'
 jobs:
   lint:
     runs-on: ubuntu-latest

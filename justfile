@@ -32,8 +32,8 @@ test-all: (poetry "run" "tox")
 
 ruff *args: (poetry "run" "ruff" "check" "async_signals" "tests" args)
 
-mypy *args: (poetry "run" "mypy" "async_signals" args)
+pyright *args: (poetry "run" "pyright" "async_signals" args)
 
-lint: ruff mypy
+lint: ruff pyright
 
 publish: (poetry "publish" "--build")

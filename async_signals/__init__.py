@@ -8,4 +8,5 @@ Heavily modified for Django's purposes.
 And again modified to be fully async.
 """
 
-from .dispatcher import Signal, receiver
+from .dispatcher import Signal as Signal
+from .dispatcher import receiver as receiver

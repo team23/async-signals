@@ -17,7 +17,7 @@ pytest-cov = ">=3,<6"
 pytest-mock = "^3.8.2"
 anyio = {extras = ["trio"], version = ">=3.6.1,<5.0.0"}
 tox = ">=3.26,<5.0"
-ruff = ">=0.2.0,<0.5.0"
+ruff = ">=0.5.0,<0.6.0"
 pyright = ">=1.1.350,<1.2"
 
 [tool.ruff]

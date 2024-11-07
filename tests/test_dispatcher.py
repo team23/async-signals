@@ -6,22 +6,22 @@ import pytest
 from async_signals import Signal, receiver
 
 
-@pytest.fixture()
+@pytest.fixture
 def signal() -> Signal:
     return Signal()
 
 
-@pytest.fixture()
+@pytest.fixture
 def signal2() -> Signal:
     return Signal()
 
 
-@pytest.fixture()
+@pytest.fixture
 def debug_signal() -> Signal:
     return Signal(debug=True)
 
 
-@pytest.fixture()
+@pytest.fixture
 def cached_signal() -> Signal:
     return Signal(use_caching=True)
 
@@ -153,14 +153,14 @@ def test_signal_with_debug_ensures_kwargs(debug_signal: Signal):
         debug_signal.connect(invalid_receiver_function)
 
 
-@pytest.mark.anyio()
+@pytest.mark.anyio
 async def test_signal_send_without_receivers(signal: Signal, mocker):
     result = await signal.send(sender=test_signal_send_without_receivers, x="a", y="b")
 
     assert len(result) == 0
 
 
-@pytest.mark.anyio()
+@pytest.mark.anyio
 async def test_signal_send_without_receivers_and_caching(signal: Signal, mocker):
     signal.use_caching = True
 
@@ -169,7 +169,7 @@ async def test_signal_send_without_receivers_and_caching(signal: Signal, mocker)
     assert len(result) == 0
 
 
-@pytest.mark.anyio()
+@pytest.mark.anyio
 async def test_signal_send_sync(signal: Signal, mocker):
     receiver_function = mocker.Mock()
 
@@ -186,7 +186,7 @@ async def test_signal_send_sync(signal: Signal, mocker):
     )
 
 
-@pytest.mark.anyio()
+@pytest.mark.anyio
 async def test_signal_send_async(signal: Signal, mocker):
     receiver_function = mocker.AsyncMock()
 
@@ -203,7 +203,7 @@ async def test_signal_send_async(signal: Signal, mocker):
     )
 
 
-@pytest.mark.anyio()
+@pytest.mark.anyio
 async def test_signal_send_will_raise_exception(signal: Signal, mocker):
     receiver_function = mocker.AsyncMock(
         side_effect=RuntimeError("Boom!"),
@@ -215,14 +215,14 @@ async def test_signal_send_will_raise_exception(signal: Signal, mocker):
         await signal.send(sender=test_signal_send_will_raise_exception, x="a", y="b")
 
 
-@pytest.mark.anyio()
+@pytest.mark.anyio
 async def test_signal_send_robust_without_receivers(signal: Signal, mocker):
     result = await signal.send_robust(sender=test_signal_send_without_receivers, x="a", y="b")
 
     assert len(result) == 0
 
 
-@pytest.mark.anyio()
+@pytest.mark.anyio
 async def test_signal_send_robust_works_normally(signal: Signal, mocker):
     receiver_function = mocker.AsyncMock()
 
@@ -239,7 +239,7 @@ async def test_signal_send_robust_works_normally(signal: Signal, mocker):
     )
 
 
-@pytest.mark.anyio()
+@pytest.mark.anyio
 async def test_signal_send_robust_will_catch_exception(signal: Signal, mocker):
     receiver_function = mocker.AsyncMock(
         side_effect=Exception("Boom!"),
@@ -268,7 +268,7 @@ def test_receiver_for_signal_list(signal: Signal, signal2: Signal):
     assert len(signal2.receivers) == 1
 
 
-@pytest.mark.anyio()
+@pytest.mark.anyio
 async def test_receivers_only_called_when_sender_matches(signal: Signal, mocker):
     receiver_function1 = mocker.AsyncMock()
     receiver_function2 = mocker.AsyncMock()

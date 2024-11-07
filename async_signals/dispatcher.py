@@ -2,7 +2,8 @@ import asyncio
 import logging
 import threading
 import weakref
-from typing import Any, Callable, Dict, Hashable, List, Optional, Tuple, Type, Union
+from collections.abc import Hashable
+from typing import Any, Callable, Optional, Union
 
 from .utils import func_accepts_kwargs
 
@@ -11,7 +12,7 @@ logger = logging.getLogger("async_signals.dispatch")
 
 def _make_id(
     target: Union[Hashable, Callable, None],
-) -> Union[Hashable, Tuple[Hashable, ...]]:
+) -> Union[Hashable, tuple[Hashable, ...]]:
     if hasattr(target, "__self__") and hasattr(target, "__func__"):
         return id(target.__self__), id(target.__func__)  # type: ignore
     return id(target)
@@ -33,7 +34,7 @@ class Signal:
             { receiverkey (id) : weakref(receiver) }
     """
 
-    receivers: List[Tuple[Tuple[Hashable, Hashable], Callable]]
+    receivers: list[tuple[tuple[Hashable, Hashable], Callable]]
     use_caching: bool
     debug: bool
 
@@ -55,7 +56,7 @@ class Signal:
         # distinct sender we cache the receivers that sender has in
         # 'sender_receivers_cache'. The cache is cleaned when .connect() or
         # .disconnect() is called and populated on send().
-        self.sender_receivers_cache: Union[weakref.WeakKeyDictionary, Dict] \
+        self.sender_receivers_cache: Union[weakref.WeakKeyDictionary, dict] \
             = weakref.WeakKeyDictionary() if use_caching else {}
         self._dead_receivers = False
 
@@ -115,7 +116,7 @@ class Signal:
             lookup_key = (_make_id(receiver), _make_id(sender))
 
         if weak:
-            ref: Union[Type[weakref.WeakMethod[Any]], Type[weakref.ReferenceType[Any]]] \
+            ref: Union[type[weakref.WeakMethod[Any]], type[weakref.ReferenceType[Any]]] \
                 = weakref.ref
             receiver_object = receiver
             # Check for bound methods
@@ -201,7 +202,7 @@ class Signal:
         self,
         sender: Hashable,
         **named: Any,
-    ) -> List[Tuple[Callable, Any]]:
+    ) -> list[tuple[Callable, Any]]:
         """
         Send signal from sender to all connected receivers.
 
@@ -243,7 +244,7 @@ class Signal:
         self,
         sender: Hashable,
         **named: Any,
-    ) -> List[Tuple[Callable, Any]]:
+    ) -> list[tuple[Callable, Any]]:
         """
         Send signal from sender to all connected receivers catching errors.
 
@@ -302,7 +303,7 @@ class Signal:
                 if not (isinstance(r[1], weakref.ReferenceType) and r[1]() is None)
             ]
 
-    def _live_receivers(self, sender: Union[Hashable, None]) -> List[Callable]:
+    def _live_receivers(self, sender: Union[Hashable, None]) -> list[Callable]:
         """
         Filter sequence of receivers to get resolved, live receivers.
 
@@ -353,7 +354,7 @@ class Signal:
 
 
 def receiver(
-    signal: Union[Signal, List[Signal], Tuple[Signal, ...]],
+    signal: Union[Signal, list[Signal], tuple[Signal, ...]],
     *,
     sender: Optional[Hashable] = None,
     weak: bool = True,

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "async-signals"
-version = "0.1.8"
+version = "0.2.0"
 description = "Async version of the Django signals class - for usage in for example FastAPI."
 authors = ["TEAM23 GmbH <info@team23.de>"]
 license = "BSD-3-Clause"

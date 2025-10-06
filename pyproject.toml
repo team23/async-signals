@@ -8,6 +8,9 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
 
+[project.urls]
+Repository = "https://github.com/team23/async-signals"
+
 [dependency-groups]
 dev = [
     "pytest>=8.4.2,<9.0.0",

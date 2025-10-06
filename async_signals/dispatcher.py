@@ -2,8 +2,8 @@ import asyncio
 import logging
 import threading
 import weakref
-from collections.abc import Hashable
-from typing import Any, Callable, Optional, Union
+from collections.abc import Callable, Hashable
+from typing import Any
 
 from .utils import func_accepts_kwargs
 
@@ -11,8 +11,8 @@ logger = logging.getLogger("async_signals.dispatch")
 
 
 def _make_id(
-    target: Union[Hashable, Callable, None],
-) -> Union[Hashable, tuple[Hashable, ...]]:
+    target: Hashable | Callable | None,
+) -> Hashable | tuple[Hashable, ...]:
     if hasattr(target, "__self__") and hasattr(target, "__func__"):
         return id(target.__self__), id(target.__func__)  # type: ignore
     return id(target)
@@ -56,16 +56,16 @@ class Signal:
         # distinct sender we cache the receivers that sender has in
         # 'sender_receivers_cache'. The cache is cleaned when .connect() or
         # .disconnect() is called and populated on send().
-        self.sender_receivers_cache: Union[weakref.WeakKeyDictionary, dict] \
+        self.sender_receivers_cache: weakref.WeakKeyDictionary | dict \
             = weakref.WeakKeyDictionary() if use_caching else {}
         self._dead_receivers = False
 
     def connect(
         self,
         receiver: Callable,
-        sender: Optional[Hashable] = None,
+        sender: Hashable | None = None,
         weak: bool = True,
-        dispatch_uid: Optional[Hashable] = None,
+        dispatch_uid: Hashable | None = None,
     ) -> None:
         """
         Connect receiver to sender for signal.
@@ -116,7 +116,7 @@ class Signal:
             lookup_key = (_make_id(receiver), _make_id(sender))
 
         if weak:
-            ref: Union[type[weakref.WeakMethod[Any]], type[weakref.ReferenceType[Any]]] \
+            ref: type[weakref.WeakMethod[Any]] | type[weakref.ReferenceType[Any]] \
                 = weakref.ref
             receiver_object = receiver
             # Check for bound methods
@@ -134,9 +134,9 @@ class Signal:
 
     def disconnect(
         self,
-        receiver: Optional[Callable] = None,
-        sender: Optional[Hashable] = None,
-        dispatch_uid: Optional[Hashable] = None,
+        receiver: Callable | None = None,
+        sender: Hashable | None = None,
+        dispatch_uid: Hashable | None = None,
     ) -> bool:
         """
         Disconnect receiver from sender for signal.
@@ -174,7 +174,7 @@ class Signal:
             self.sender_receivers_cache.clear()
         return disconnected
 
-    def has_listeners(self, sender: Union[Hashable, None] = None) -> bool:
+    def has_listeners(self, sender: Hashable | None = None) -> bool:
         return bool(self._live_receivers(sender))
 
     @classmethod
@@ -303,7 +303,7 @@ class Signal:
                 if not (isinstance(r[1], weakref.ReferenceType) and r[1]() is None)
             ]
 
-    def _live_receivers(self, sender: Union[Hashable, None]) -> list[Callable]:
+    def _live_receivers(self, sender: Hashable | None) -> list[Callable]:
         """
         Filter sequence of receivers to get resolved, live receivers.
 
@@ -343,7 +343,7 @@ class Signal:
                 non_weak_receivers.append(receiver)
         return non_weak_receivers
 
-    def _remove_receiver(self, receiver: Optional[Callable] = None) -> None:  # noqa: ARG002
+    def _remove_receiver(self, receiver: Callable | None = None) -> None:  # noqa: ARG002
         # Mark that the self.receivers list has dead weakrefs. If so, we will
         # clean those up in connect, disconnect and _live_receivers while
         # holding self.lock. Note that doing the cleanup here isn't a good
@@ -354,11 +354,11 @@ class Signal:
 
 
 def receiver(
-    signal: Union[Signal, list[Signal], tuple[Signal, ...]],
+    signal: Signal | list[Signal] | tuple[Signal, ...],
     *,
-    sender: Optional[Hashable] = None,
+    sender: Hashable | None = None,
     weak: bool = True,
-    dispatch_uid: Optional[Hashable] = None,
+    dispatch_uid: Hashable | None = None,
 ) -> Callable:
     """
     A decorator for connecting receivers to signals. Used by passing in the
@@ -374,7 +374,7 @@ def receiver(
     """
 
     def _decorator(func: Callable) -> Callable:
-        if isinstance(signal, (list, tuple)):
+        if isinstance(signal, list | tuple):
             for s in signal:
                 s.connect(
                     func,

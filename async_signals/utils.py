@@ -1,6 +1,6 @@
 import functools
 import inspect
-from typing import Callable
+from collections.abc import Callable
 
 # Those functions are copied from
 # https://github.com/django/django/blob/main/django/utils/inspect.py

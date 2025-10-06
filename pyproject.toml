@@ -1,24 +1,23 @@
-[tool.poetry]
+[project]
 name = "async-signals"
 version = "0.2.0"
 description = "Async version of the Django signals class - for usage in for example FastAPI."
-authors = ["TEAM23 GmbH <info@team23.de>"]
+authors = [{ name = "TEAM23 GmbH", email = "info@team23.de" }]
 license = "BSD-3-Clause"
-repository = "https://github.com/team23/async-signals"
 readme = "README.md"
-packages = [{include = "async_signals"}]
+requires-python = ">=3.9"
+dependencies = []
 
-[tool.poetry.dependencies]
-python = "^3.9"
-
-[tool.poetry.group.dev.dependencies]
-pytest = ">=7.1.3,<9.0.0"
-pytest-cov = ">=3,<8"
-pytest-mock = "^3.8.2"
-anyio = {extras = ["trio"], version = ">=3.6.1,<5.0.0"}
-tox = ">=3.26,<5.0"
-ruff = ">=0.5.0,<0.14.0"
-pyright = ">=1.1.350,<1.2"
+[dependency-groups]
+dev = [
+    "pytest>=7.1.3,<9.0.0",
+    "pytest-cov>=3,<8",
+    "pytest-mock>=3.8.2",
+    "anyio[trio]>=3.6.1,<5.0.0",
+    "tox>=3.26,<5.0",
+    "ruff>=0.5.0,<0.14.0",
+    "pyright>=1.1.350,<1.2"
+]
 
 [tool.ruff]
 line-length = 115
@@ -27,7 +26,7 @@ output-format = "grouped"
 
 [tool.ruff.lint]
 select = ["F","E","W","C","I","N","UP","ANN","S","B","A","COM","C4","T20","PT","ARG","TD","RUF"]
-ignore = ["A001","A002","A003","ANN101","ANN102","ANN401","C901","N8","B008","F405","F821"]
+ignore = ["A001","A002","A003","ANN401","C901","N8","B008","F405","F821"]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
@@ -35,5 +34,9 @@ ignore = ["A001","A002","A003","ANN101","ANN102","ANN401","C901","N8","B008","F4
 "test_*.py" = ["S101","ANN","F401","ARG001"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.8.22,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "async_signals"
+module-root = ""

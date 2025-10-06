@@ -1,4 +1,4 @@
-/poetry.lock
+/uv.lock
 /dist/*
 /.coverage
 /.tox
@@ -6,4 +6,3 @@
 __pycache__
 *.pyc
 *.pyo
-

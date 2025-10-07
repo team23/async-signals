@@ -4,6 +4,7 @@ version = "0.3.0"
 description = "Async version of the Django signals class - for usage in for example FastAPI."
 authors = [{ name = "TEAM23 GmbH", email = "info@team23.de" }]
 license = "BSD-3-Clause"
+license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
